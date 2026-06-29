@@ -3,7 +3,9 @@
 const {
   createCompany,
   getCompanies,
-  getCompanyById
+  getCompanyById,
+  updateCompany,
+  deleteCompany
 } = require("../models/company.model");
 
 // CREATE COMPANY
@@ -61,6 +63,30 @@ exports.getCompany = async (req, res) => {
 
     res.json(company);
 
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// UPDATE COMPANY
+exports.updateCompany = async (req, res) => {
+  try {
+    const updatedCompanies = await updateCompany(
+      req.params.id,
+      req.body,
+      req.user.userId
+    );
+    res.json(updatedCompanies);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// DELETE COMPANY
+exports.deleteCompany = async (req, res) => {
+  try {
+    await deleteCompany(req.params.id, req.user.userId);
+    res.json({ message: "Company deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

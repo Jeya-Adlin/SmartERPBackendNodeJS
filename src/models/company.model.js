@@ -43,8 +43,48 @@ const getCompanyById = async (id, userId) => {
     .first();
 };
 
+// UPDATE COMPANY
+const updateCompany = async (id, data, userId) => {
+  // whitelist allowed company fields to avoid updating invalid columns
+  const allowed = [
+    "company_name",
+    "address",
+    "gst_number",
+    "financial_year",
+    "state",
+    "contact_no"
+  ];
+
+  const updateData = {};
+
+  // map possible incoming `phone` field to `contact_no`
+  if (data.phone) updateData.contact_no = data.phone;
+  if (data.companyName && !data.company_name) updateData.company_name = data.companyName;
+
+  allowed.forEach((key) => {
+    if (key === "contact_no") return; // handled above
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      updateData[key] = data[key];
+    }
+  });
+
+  return db("companies")
+    .where({ id, user_id: userId })
+    .update(updateData)
+    .returning("*");
+};
+
+// DELETE COMPANY
+const deleteCompany = async (id, userId) => {
+  return db("companies")
+    .where({ id, user_id: userId })
+    .del();
+};
+
 module.exports = {
   createCompany,
   getCompanies,
-  getCompanyById
+  getCompanyById,
+  updateCompany,
+  deleteCompany
 };
