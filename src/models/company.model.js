@@ -17,11 +17,10 @@ const createCompany = async (data, userId) => {
   const insertData = { user_id: userId };
 
   // map possible incoming `phone` field to `contact_no`
-  if (data.phone) insertData.contact_no = data.phone;
+  if (data.phone && !data.contact_no) insertData.contact_no = data.phone;
   if (data.companyName && !data.company_name) insertData.company_name = data.companyName;
 
   allowed.forEach((key) => {
-    if (key === "contact_no") return; // handled above
     if (Object.prototype.hasOwnProperty.call(data, key)) {
       insertData[key] = data[key];
     }
@@ -58,11 +57,10 @@ const updateCompany = async (id, data, userId) => {
   const updateData = {};
 
   // map possible incoming `phone` field to `contact_no`
-  if (data.phone) updateData.contact_no = data.phone;
+  if (data.phone && !data.contact_no) updateData.contact_no = data.phone;
   if (data.companyName && !data.company_name) updateData.company_name = data.companyName;
 
   allowed.forEach((key) => {
-    if (key === "contact_no") return; // handled above
     if (Object.prototype.hasOwnProperty.call(data, key)) {
       updateData[key] = data[key];
     }
